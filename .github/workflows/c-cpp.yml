@@ -1,4 +1,4 @@
-name: C/C++ CI
+name: TankGuard CI
 
 on:
   push:
@@ -7,17 +7,32 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
-
+  controller:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
-    - name: configure
-      run: ./configure
-    - name: make
-      run: make
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
+      - uses: actions/checkout@v4
+      - name: Host controller and level tests
+        run: |
+          c++ -std=c++11 -Wall -Wextra -Werror -Iinclude tests/controller_test.cpp -o /tmp/tankguard-test
+          /tmp/tankguard-test
+          c++ -std=c++11 -Wall -Wextra -Werror -DNDEBUG -Iinclude tests/controller_test.cpp -o /tmp/tankguard-test-ndebug
+          /tmp/tankguard-test-ndebug
+
+  firmware:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.platformio
+          key: pio-${{ hashFiles('platformio.ini') }}
+          restore-keys: pio-
+      - name: Install PlatformIO
+        run: python -m pip install --upgrade platformio
+      - name: Build bench and sensor
+        run: |
+          python -m platformio run -e bench
+          python -m platformio run -e sensor

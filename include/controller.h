@@ -30,9 +30,10 @@ class Controller {
     if(fault!=Fault::None || !seen || uint32_t(now-lastSample)>s.stale) return false;
     armed=true; return true;
   }
-  void sample(float value, bool valid, uint32_t now) {
+  void sample(float value, bool valid, uint32_t now, Fault invalidFault = Fault::Sensor) {
     if(!valid || !std::isfinite(value) || value<0 || value>100) {
-      seen=false; trip(Fault::Sensor,now); return;
+      if(invalidFault==Fault::None) invalidFault=Fault::Sensor;
+      seen=false; trip(invalidFault,now); return;
     }
     level=value; lastSample=now; seen=true;
     if(fault!=Fault::None || !armed) return;
@@ -62,7 +63,7 @@ class Controller {
   bool validConfig() const { return std::isfinite(s.low) && std::isfinite(s.high) &&
     std::isfinite(s.rise) && s.low>=0 && s.high<=100 && s.low<s.high && s.rise>0 &&
     s.confirm>0 && s.minOff>0 && s.stale>0 && s.maxFill>0 && s.riseWindow>0; }
-  void trip(Fault f,uint32_t now) { stop(now); armed=false; fault=f; }
+  void trip(Fault f,uint32_t now) { stop(now); armed=false; if(fault==Fault::None) fault=f; }
 };
 inline const char* faultName(Fault f) {
  switch(f) { case Fault::None:return "none"; case Fault::Sensor:return "sensor";
