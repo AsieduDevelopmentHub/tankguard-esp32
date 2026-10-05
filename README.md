@@ -65,3 +65,9 @@ Use an equivalent temporary executable path on Windows with a C++ compiler insta
 - [Espressif GPIO hardware guidance](https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32c3/schematic-checklist.html)
 
 No license has been selected yet.
+
+## Maintainer
+
+Maintained by [Asiedu Minta Kwaku](https://asiedudevhub.auralenx.com/), a software developer and IoT & embedded systems engineer based in Ghana.
+
+For related work and project enquiries, visit my [portfolio](https://asiedudevhub.auralenx.com/) or connect on [LinkedIn](https://www.linkedin.com/in/asiedudevelopmenthub).
